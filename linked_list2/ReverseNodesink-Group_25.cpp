@@ -1,0 +1,57 @@
+//Optimal - no brute force exit
+class Solution {
+public:
+    ListNode* reverseLL(ListNode* head) {
+        ListNode* temp = head;
+        ListNode* prev = nullptr;
+
+        while(temp != nullptr) {
+            ListNode* front = temp->next;
+            temp->next = prev;
+            prev = temp;
+            temp = front;
+        }
+        return prev;
+    }
+
+    ListNode* getKthNode(ListNode* temp, int k) {
+        k -= 1;
+        while(temp != nullptr && k > 0) {
+            k--;
+            temp = temp->next;
+        }
+        return temp;
+    }
+
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode* temp = head;
+        ListNode* prevLast = nullptr;
+
+        while(temp != nullptr) {
+            ListNode* kThNode = getKthNode(temp, k);
+            
+            if(kThNode == nullptr) {
+                if(prevLast) {
+                    prevLast->next = temp;
+                }
+                break;
+            }
+
+            ListNode* nextNode = kThNode->next;
+            kThNode->next = nullptr;
+            
+            reverseLL(temp);
+            
+            if(temp == head) {
+                head = kThNode;
+            } else {
+                prevLast->next = kThNode;
+            }
+            
+            prevLast = temp;
+            temp = nextNode;
+        }
+        
+        return head;
+    }
+};
