@@ -1,21 +1,21 @@
-// //Brute force - O(2nlogn)
-// class Solution {
-// public:
-//     bool hasCycle(ListNode *head) {
-//         unordered_set<ListNode*> st;
-//         ListNode* temp = head;
+//Brute force - O(2nlogn)
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        unordered_set<ListNode*> st;
+        ListNode* temp = head;
 
-//         while (temp != nullptr) {
-//             if (st.find(temp) != st.end()) {
-//                 return true;
-//             }
-//             st.insert(temp);
-//             temp = temp->next;
-//         }
+        while (temp != nullptr) {
+            if (st.find(temp) != st.end()) {
+                return true;
+            }
+            st.insert(temp);
+            temp = temp->next;
+        }
         
-//         return false;
-//     }
-// };
+        return false;
+    }
+};
 
 //OPtimal - O(N)
 class Solution {
