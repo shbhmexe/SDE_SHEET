@@ -1,57 +1,39 @@
-//qUESTION 1 JULY26
-//BruteForce 
-//T.C : O(m*n*(m+n))
-//S.C : O(m*n)
+// brute force 
 // class Solution {
-// public:
-//     void setZeroes(vector<vector<int>>& matrix) {
-//         int m = matrix.size();
-//         int n = matrix[0].size();
-
-//         vector<vector<int>> temp = matrix;
-
-//         for (int i = 0; i < m; i++) {
-//             for (int j = 0; j < n; j++) {
-//                 if (matrix[i][j] == 0) {
-//                     for (int k = 0; k < n; k++) {
-//                         temp[i][k] = 0;  // zero out the entire row
-//                     }
-//                     for (int k = 0; k < m; k++) {
-//                         temp[k][j] = 0;  // zero out the entire column
-//                     }
-//                 }
+// private:
+//     void markRow(vector<vector<int>>& matrix, int n, int m, int i) {
+//         for (int j = 0; j < m; j++) {
+//             if (matrix[i][j] != 0) {
+//                 matrix[i][j] = -1;
 //             }
 //         }
-
-//         matrix = temp;
 //     }
-// };
 
+//     void markCol(vector<vector<int>>& matrix, int n, int m, int j) {
+//         for (int i = 0; i < n; i++) {
+//             if (matrix[i][j] != 0) {
+//                 matrix[i][j] = -1;
+//             }
+//         }
+//     }
 
-// //Approch-2 (Using m+n extra space)
-// //T.C : O(m*n)
-// //S.C : O(m+n)
-// class Solution {
 // public:
 //     void setZeroes(vector<vector<int>>& matrix) {
-//         int m = matrix.size();        // number of rows
-//         int n = matrix[0].size();     // number of columns
+//         int n = matrix.size();
+//         int m = matrix[0].size();
 
-//         vector<bool> row(m, false);
-//         vector<bool> col(n, false);
-
-//         for(int i = 0; i < m; i++){
-//             for(int j = 0; j < n; j++){
-//                 if(matrix[i][j] == 0){
-//                     row[i] = true; //mark it for zero
-//                     col[j] = true; //mark it for zero
+//         for (int i = 0; i < n; i++) {
+//             for (int j = 0; j < m; j++) {
+//                 if (matrix[i][j] == 0) {
+//                     markRow(matrix, n, m, i);
+//                     markCol(matrix, n, m, j);
 //                 }
 //             }
 //         }
 
-//         for(int i = 0; i < m; i++){
-//             for(int j = 0; j < n; j++){
-//                 if(row[i] || col[j]){
+//         for (int i = 0; i < n; i++) {
+//             for (int j = 0; j < m; j++) {
+//                 if (matrix[i][j] == -1) {
 //                     matrix[i][j] = 0;
 //                 }
 //             }
@@ -59,54 +41,78 @@
 //     }
 // };
 
+// // better 
+// class Solution {
+// public:
+//     void setZeroes(vector<vector<int>>& matrix) {
+//         int n = matrix.size();
+//         int m = matrix[0].size();
+//         int col0 = 1;
 
-//Approach-3 (In place constant space)
-//T.C : O(m*n)
-//S.C : O(1)
+//         for (int i = 0; i < n; i++) {
+//             if (matrix[i][0] == 0) col0 = 0;
+//             for (int j = 1; j < m; j++) {
+//                 if (matrix[i][j] == 0) {
+//                     matrix[i][0] = 0;
+//                     matrix[0][j] = 0;
+//                 }
+//             }
+//         }
+
+//         for (int i = n - 1; i >= 0; i--) {
+//             for (int j = m - 1; j >= 1; j--) {
+//                 if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+//                     matrix[i][j] = 0;
+//                 }
+//             }
+//             if (col0 == 0) {
+//                 matrix[i][0] = 0;
+//             }
+//         }
+//     }
+// };
+
+//optimal 
 class Solution {
 public:
     void setZeroes(vector<vector<int>>& matrix) {
-        int m = matrix.size();
-        int n = matrix[0].size();
-        bool firstRowZero = false;
-        bool firstColZero = false;
+        int n = matrix.size();
+        int m = matrix[0].size();
+        int col0 = 1;
 
-        // Check first row and col separately
-        for(int i = 0; i < m; i++) {
-            if(matrix[i][0] == 0) 
-                firstColZero = true;
-        }
-
-        for(int j = 0; j < n; j++) {
-            if(matrix[0][j] == 0) 
-                firstRowZero = true;
-        }
-
-        for(int i = 1; i < m; i++) {
-            for(int j = 1; j < n; j++) {
-                if(matrix[i][j] == 0) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (matrix[i][j] == 0) {
                     matrix[i][0] = 0;
-                    matrix[0][j] = 0;
+                    if (j != 0) {
+                        matrix[0][j] = 0;
+                    } else {
+                        col0 = 0;
+                    }
                 }
             }
         }
 
-
-        for(int i = 1; i < m; i++) {
-            for(int j = 1; j < n; j++) {
-                if(matrix[i][0] == 0 || matrix[0][j] == 0) {
-                    matrix[i][j] = 0;
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < m; j++) {
+                if (matrix[i][j] != 0) {
+                    if (matrix[0][j] == 0 || matrix[i][0] == 0) {
+                        matrix[i][j] = 0;
+                    }
                 }
             }
         }
 
-        if(firstRowZero) {
-            for(int j = 0; j < n; j++) 
+        if (matrix[0][0] == 0) {
+            for (int j = 0; j < m; j++) {
                 matrix[0][j] = 0;
+            }
         }
-        if(firstColZero) {
-            for(int i = 0; i < m; i++) 
+
+        if (col0 == 0) {
+            for (int i = 0; i < n; i++) {
                 matrix[i][0] = 0;
+            }
         }
     }
 };
